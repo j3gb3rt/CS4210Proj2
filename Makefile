@@ -2,16 +2,19 @@ CC = gcc
 CFLAGS = -g
 LDFLAGS = 
 LIBS = .
-SRC = ipc.c
+SRC = remote_service.c
 OBJ = $(SRC:.c=.o)
 
 OUT = bin/libipc.a
 
-.c.o:
+.c.o: 
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OUT): $(OBJ)
 	ar rcs $(OUT) $(OBJ)
+
+client :
+	$(CC) $(CFLAGS) client.c $(OUT) -o client
 
 #matrix:
 #	$(CC) $(CFLAGS) src/gt_matrix.c $(OUT) -o bin/matrix
@@ -24,5 +27,5 @@ $(OUT): $(OBJ)
 
 
 clean :
-	@rm *.o *.a
+	@rm *.o bin/*.a client
 	@echo Cleaned!

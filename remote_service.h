@@ -10,8 +10,10 @@ typedef struct __arg_stack
 
 typedef struct __shared_block
 {
-	mutex_thread_t *lock;
+	pthread_mutex_t *lock;
     arg_stack *args;
     int arg_count;
     int *ret_location;
 } shared_block;
+
+int remote_service_init();
