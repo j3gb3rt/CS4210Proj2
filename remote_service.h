@@ -1,7 +1,7 @@
 #include <pthread.h>
 #include <sys/types.h>
 
-#define MSG_SIZE 128
+#define MSG_SIZE sizeof(key_t)
 
 typedef struct __arg_stack
 {
@@ -25,4 +25,4 @@ typedef struct __msg {
 int remote_service_server_init();
 int remote_service_client_init();
 int remote_service_add(int first_number, int second_number);
-void msgq_watch(int msqid);
+void msgq_rcvr(msg_t message);

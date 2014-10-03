@@ -8,12 +8,12 @@
 
 #include "remote_service.h"
 
+int msqid;
 key_t shared_mem_key;
 shared_block *shared_mem;
 
 int remote_service_server_init() {
 	pthread_t msg_watcher;
-	int msqid;
 	int flag = IPC_CREAT | 0666;
 	key_t key = 1234;
 
@@ -26,9 +26,6 @@ int remote_service_server_init() {
 		fprint("msgget: msgget succeeded: msqid = %d\n", msqid);
 	}
 
-	//init watching thread
-	pthread_create(&msg_watcher, NULL, /*watching function*/, msqid);
-	fprint("message queue watching thread created\n");	
 }
 
 int remote_service_client_init() {
@@ -83,11 +80,9 @@ int remote_service_add(int first_number, int second_number) {
 	return shared_mem->ret_val;
 }
 
-msg_t msgq_watch(int msqid, message)
+void msgq_rcvr(msg_t message)
 {	
-	//maybe have a get msqid function
 	msgrcv(msqid, &message, MSG_SIZE, 0);
-	return 
 }
 
 
