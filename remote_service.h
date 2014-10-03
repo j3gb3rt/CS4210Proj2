@@ -1,4 +1,5 @@
 #include <pthread.h>
+#include <sys/types.h>
 
 typedef struct __arg_stack
 {
@@ -10,10 +11,12 @@ typedef struct __arg_stack
 
 typedef struct __shared_block
 {
-	pthread_mutex_t *lock;
-    arg_stack *args;
-    int arg_count;
-    int *ret_location;
+	int locked;
+    int arg0;
+	int arg1;
+   	int ret_val;
 } shared_block;
 
-int remote_service_init();
+int remote_service_server_init();
+int remote_service_client_init();
+int remote_service_add(int first_number, int second_number);
