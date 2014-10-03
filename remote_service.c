@@ -64,8 +64,6 @@ int remote_service_add(int first_number, int second_number) {
 	while (shared_mem->locked) {
 		//spin
 	}
-	
-	//loop checking lock
-	
+
 	return shared_mem->ret_val;
 }
