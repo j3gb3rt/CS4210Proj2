@@ -14,7 +14,7 @@ $(OUT): $(OBJ)
 	ar rcs $(OUT) $(OBJ)
 
 client :
-	$(CC) $(CFLAGS) client.c $(OUT) -o client
+	$(CC) $(CFLAGS) client.c $(OUT) -pthread -o client
 
 #matrix:
 #	$(CC) $(CFLAGS) src/gt_matrix.c $(OUT) -o bin/matrix
