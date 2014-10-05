@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <sys/types.h>
 
+/* Each byte is represented by 2 Hex values */
 #define MSG_SIZE sizeof(key_t)
 
 typedef struct __arg_stack

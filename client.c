@@ -10,9 +10,12 @@ void *remote_add(void *arguments) {
 	
 	failure = remote_service_client_init();
 	printf("failure? %i\n", failure);
-	result = (int *)malloc(sizeof(int));
+	printf("derps\n");
+	result = malloc(sizeof(int));
+	printf("harhar\n");
 	*result = remote_service_add(6, 9);
-	return (void *) result;
+	printf("lol\n");
+	return result;
 }
 
 int main(int argc, char *argv[]) {
@@ -36,7 +39,7 @@ int main(int argc, char *argv[]) {
 		thread_args[i] = 2 * i;
 		thread_args[i + 1] = (2 * i) + 1;
 		printf("Creating request thread %d with args %i & %i\n", i, thread_args[i], thread_args[i + 1]);
-		pthread_error = pthread_create(&threads[i], NULL, remote_add, (void *) &thread_args[i]);
+		pthread_error = pthread_create(&threads[i], NULL, remote_add, &thread_args[i]);
 		if (pthread_error) {
 			threads[i] = (pthread_t) 0;
 			printf("Thread failed");
@@ -45,7 +48,7 @@ int main(int argc, char *argv[]) {
 	
 	for (i = 0; i < number_of_requests; i++) {
 		if (threads[i] != (pthread_t) 0) {
-			pthread_error = pthread_join(threads[i], results[i]);
+			pthread_error = pthread_join(threads[i], &results[i]);
 			if (pthread_error) {
 				printf("Thread could not join");
 			} else {

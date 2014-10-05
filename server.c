@@ -13,16 +13,21 @@ void msgq_watch()
 	{
 		msgq_rcvr(message);
 		memcpy(key, message.mtext,[MSG_SIZE]); 
+		
 		/*TODO add request to request queue*/
-			
+	}
 }
 
 
 
-main(1)
+int main(int argc, char *argv[])
 {
 	remote_service_server_init();
 	pthread_create(&msg_watcher, NULL, &msg_watch, NULL);
-        fprint("message queue watching thread created\n"); 
-	
+    fprint("message queue watching thread created\n");
+	while(1) {
+		/*TODO interate through the process queue
+			   and add and store result unlock and
+			   detach */
+	}
 }
