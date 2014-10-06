@@ -7,7 +7,7 @@
 
 #include "remote_service.h"
 
-#define MSG_Q_KEY 1234
+#define MSG_Q_KEY 1111
 
 int msg_q_id;
 key_mem_pair pairs[MAX_THREADS];
@@ -71,14 +71,14 @@ int remote_service_client_init(unsigned int id) {
 		return -5;
 	}
 	
-//	msg_q_key = MSG_Q_KEY;
-//	msg_q_id = msgget(msg_q_key, 0666);
-//	if (msg_q_id != -1) {
-//		printf("%i\n", msg_q_id);
-//	} else {
-//		printf("%s\n", strerror(errno));
-//		return -5;
-//	}
+	msg_q_key = MSG_Q_KEY;
+	msg_q_id = msgget(msg_q_key, 0666);
+	if (msg_q_id != -1) {
+		printf("%i\n", msg_q_id);
+	} else {
+		printf("%s\n", strerror(errno));
+		return -5;
+	}
 	return 0;
 	
 }
@@ -96,11 +96,12 @@ int remote_service_add(unsigned int id, int first_number, int second_number) {
 	msg_t message;
 	message.mtype = 1;
 	memcpy(message.mtext, &pairs[id].shared_mem_key, MSG_SIZE);
-//	msgsnd(msg_q_id, &message, MSG_SIZE, 0);
+	msgsnd(msg_q_id, &message, MSG_SIZE, 0);
+	printf("message sent. msq_q_id = %i\n", msg_q_id);
 	
-//	while (pairs[id].shared_mem->locked) {
-//		//spin
-//	}
+	while (pairs[id].shared_mem->locked) {
+		//spin
+	}
 
 	return pairs[id].shared_mem->ret_val;
 }

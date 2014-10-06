@@ -21,7 +21,9 @@ void msgq_watch()
 
 	while(1)
 	{
+		printf("about to msgrcv\n");
 		msgq_rcvr(message);
+		printf("message received\n");
 		memcpy(&key, message.mtext,MSG_SIZE); 
 	
 		shmid = shmget(key, sizeof(shared_block), IPC_CREAT | S_IWUSR | S_IRUSR | 
@@ -95,6 +97,7 @@ void add_to_requestq(process_queue *queue, shared_block *shm)
 		queue->requests->last->next = curr;
 		queue->requests->last = curr;
 	}
+	printf("added request to queue\n");
 }
 
 
@@ -126,6 +129,7 @@ int main(int argc, char *argv[])
 				shared_mem->ret_val = shared_mem->arg0 + shared_mem->arg1;
 				shared_mem->locked = 0;
 				shmdt(shared_mem);
+				printf("request completed\n");
 				
 				if (request->next != NULL) {
 					curr_process->requests = request->next;
