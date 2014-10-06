@@ -3,7 +3,7 @@
 
 pthread_t msg_watcher;
 
-
+process_queue processes;
 
 void msgq_watch()
 {
@@ -23,10 +23,13 @@ void msgq_watch()
 int main(int argc, char *argv[])
 {
 	remote_service_server_init();
+	processes = malloc(sizeof(process_queue));
 	pthread_create(&msg_watcher, NULL, &msg_watch, NULL);
     fprint("message queue watching thread created\n");
 	while(1) {
-		/*TODO interate through the process queue
+		
+		
+		/*TODO iterate through the process queue
 			   and add and store result unlock and
 			   detach */
 	}

@@ -7,14 +7,16 @@
 void *remote_add(void *arguments) {
 	int failure;
 	int *result;
+	int *args;
 	
-	failure = remote_service_client_init();
+	args = (int *) arguments;
+	
+	failure = remote_service_client_init((unsigned int) args[0]);
 	printf("failure? %i\n", failure);
-	printf("derps\n");
+
 	result = malloc(sizeof(int));
-	printf("harhar\n");
-	*result = remote_service_add(6, 9);
-	printf("lol\n");
+	*result = remote_service_add((unsigned int) args[0], args[1], args[2]);
+
 	return result;
 }
 
@@ -31,15 +33,16 @@ int main(int argc, char *argv[]) {
 	printf("Number of requests: %i\n", number_of_requests);
 	
 	pthread_t threads[number_of_requests];
-	int thread_args[2 * number_of_requests];
+	int thread_args[3 * number_of_requests];
 	void *results[number_of_requests];
 	int i;
 	
 	for (i = 0; i < number_of_requests; i++) {
-		thread_args[i] = 2 * i;
-		thread_args[i + 1] = (2 * i) + 1;
-		printf("Creating request thread %d with args %i & %i\n", i, thread_args[i], thread_args[i + 1]);
-		pthread_error = pthread_create(&threads[i], NULL, remote_add, &thread_args[i]);
+		thread_args[(3 * i)] = i;
+		thread_args[(3 * i) + 1] = (2 * i);
+		thread_args[(3 * i) + 2] = (2 * i) + 1;
+		printf("Creating request thread %d with args %i & %i\n", i, thread_args[(3 * i) + 1], thread_args[(3 * i) + 2]);
+		pthread_error = pthread_create(&threads[i], NULL, remote_add, &thread_args[(3 * i)]);
 		if (pthread_error) {
 			threads[i] = (pthread_t) 0;
 			printf("Thread failed");
