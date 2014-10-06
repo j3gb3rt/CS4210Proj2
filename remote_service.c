@@ -1,4 +1,5 @@
 #include <sys/ipc.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -87,6 +88,7 @@ int remote_service_add(unsigned int id, int first_number, int second_number) {
 	pairs[id].shared_mem->arg0 = first_number;
 	pairs[id].shared_mem->arg1 = second_number;
 	pairs[id].shared_mem->ret_val = first_number + second_number;
+	pairs[id].shared_mem->pid = getpid();
 	
 	//mgsq call
 	//make a message
