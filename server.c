@@ -1,10 +1,13 @@
 #include "remote_service.h"
 #include "server.h"
 #include <pthread.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/stat.h>
 
 pthread_t msg_watcher;
 process_queue *queue;
