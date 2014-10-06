@@ -14,15 +14,32 @@ void msgq_watch()
 {
 	key_t key;
 	msg_t message;
+	int shmid;
+	shared_block *shm;
+
 	while(1)
 	{
 		msgq_rcvr(message);
 		memcpy(&key, message.mtext,MSG_SIZE); 
-		add_to_queue(key, (pid_t)(message.mtype));		
+	
+		shmid = shmget(key, sizeof(shared_block), IPC_CREAT | S_IWUSR | S_IRUSR | 
+                                                                   S_IWGRP | S_IRGRP);
+		if(shmid == -1)
+		{
+			printf("%s\n", strerror(errno));
+		}
+
+		shm = (shared_block *) shmat(shmid, NULL, 0);
+		if(shm == (void *) -1)
+		{
+			printf("%s\n", strerror(errno));
+		}
+
+		add_to_queue(shm, shm->pid);		
 	}
 }
 
-void add_to_queue(key_t key, pid_t pid)
+void add_to_queue(shared_block *shm, pid_t pid)
 {
 	process_queue *curr = queue;
 	if(curr == NULL)
@@ -55,11 +72,11 @@ void add_to_queue(key_t key, pid_t pid)
 		curr = queue->last;
 	}
 
-	add_to_requestq(curr, key);
+	add_to_requestq(curr, shm);
 
 }
 
-void add_to_requestq(process_queue *queue, key_t key)
+void add_to_requestq(process_queue *queue, shared_block *shm)
 {
 	request_queue *curr = queue->requests;
 	//request queue empty, add to front
@@ -67,12 +84,12 @@ void add_to_requestq(process_queue *queue, key_t key)
 	{
 		queue->requests = (request_queue *)malloc(sizeof(request_queue));
 		queue->requests->last = queue->requests;
-		queue->requests->shared_mem_key = key;	
+		queue->requests->shm = shm;	
 	}else
 	{
 	//create and add to end of request queue
 		curr = (request_queue *)malloc(sizeof(request_queue));
-		curr->shared_mem_key = key;
+		curr->shm = shm;
 		queue->requests->last->next = curr;
 		queue->requests->last = curr;
 	}
@@ -82,9 +99,8 @@ void add_to_requestq(process_queue *queue, key_t key)
 int main(int argc, char *argv[])
 {
 	remote_service_server_init();
-	/*processes = malloc(sizeof(process_queue)); */
 	pthread_create(&msg_watcher, NULL, (void *)&msgq_watch, NULL);
-    printf("message queue watching thread created\n");
+	printf("message queue watching thread created\n");
 	
 	while(1) {
 		

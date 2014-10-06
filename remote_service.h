@@ -17,6 +17,7 @@ typedef struct __shared_block
 	int arg0;
 	int arg1;
    	int ret_val;
+	pid_t pid;
 } shared_block;
 
 typedef struct __key_mem_pair
