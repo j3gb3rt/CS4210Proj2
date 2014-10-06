@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -g
 LDFLAGS = 
 LIBS = .
-SRC = remote_service.c
+SRC = remote_service.c server.c
 OBJ = $(SRC:.c=.o)
 
 OUT = bin/libipc.a

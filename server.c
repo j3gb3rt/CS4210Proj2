@@ -1,5 +1,7 @@
 #include "remote_service.h"
 #include <pthread.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 pthread_t msg_watcher;
 process_queue queue;
@@ -51,6 +53,8 @@ void add_to_queue(key_t key, pid_t pid)
 	}
 
 	add_to_requestq(curr, key)
+
+	}
 }
 
 void add_to_requestq(process_queue queue, key_t key)
@@ -73,10 +77,16 @@ void add_to_requestq(process_queue queue, key_t key)
 }
 
 
-main(1)
+int main(int argc, char *argv[])
 {
 	remote_service_server_init();
+	processes = malloc(sizeof(process_queue));
 	pthread_create(&msg_watcher, NULL, &msg_watch, NULL);
-        fprint("message queue watching thread created\n"); 
-	/*TODO service requests*/
+    	fprint("message queue watching thread created\n");
+	while(1) {
+		
+		/*TODO iterate through the process queue
+			   and add and store result unlock and
+			   detach */
+	}
 }
