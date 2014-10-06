@@ -1,4 +1,6 @@
 #include <pthread.h>
+#include <sys/stat.h>
+#include <sys/shm.h>
 #include <sys/types.h>
 
 /* Each byte is represented by 2 Hex values */

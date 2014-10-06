@@ -16,6 +16,7 @@ all : $(OUT) client server
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OUT): $(OBJ)
+	@mkdir -p bin
 	ar rcs $(OUT) $(OBJ)
 
 client :
@@ -35,5 +36,5 @@ server :
 
 
 clean :
-	@rm *.o bin/*.a client
+	@rm *.o bin/*.a client server
 	@echo Cleaned!

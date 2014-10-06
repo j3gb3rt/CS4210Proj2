@@ -1,6 +1,4 @@
 #include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/stat.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
