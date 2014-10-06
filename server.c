@@ -84,7 +84,8 @@ int main(int argc, char *argv[])
 	remote_service_server_init();
 	/*processes = malloc(sizeof(process_queue)); */
 	pthread_create(&msg_watcher, NULL, (void *)&msgq_watch, NULL);
-    	fprint("message queue watching thread created\n");
+    printf("message queue watching thread created\n");
+	
 	while(1) {
 		
 		/*TODO iterate through the process queue

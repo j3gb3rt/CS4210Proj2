@@ -2,10 +2,15 @@ CC = gcc
 CFLAGS = -g
 LDFLAGS = 
 LIBS = .
-SRC = remote_service.c server.c
+SRC = remote_service.c
 OBJ = $(SRC:.c=.o)
 
 OUT = bin/libipc.a
+
+.PHONY: all
+.DEFAULT: all
+
+all : $(OUT) client server
 
 .c.o: 
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -15,6 +20,9 @@ $(OUT): $(OBJ)
 
 client :
 	$(CC) $(CFLAGS) client.c $(OUT) -pthread -o client
+
+server :
+	$(CC) $(CFLAGS) server.c $(OUT) -pthread -o server
 
 #matrix:
 #	$(CC) $(CFLAGS) src/gt_matrix.c $(OUT) -o bin/matrix
