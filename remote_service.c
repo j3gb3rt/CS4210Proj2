@@ -109,7 +109,7 @@ int remote_service_add(unsigned int id, int first_number, int second_number) {
 	
 	while (pairs[id].shared_mem->locked) {
 		if(pairs[id].shared_mem->locked == 0){
-			print("what the fuck\n");
+			printf("what the fuck\n");
 		}
 		//spin
 	}

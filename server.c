@@ -47,6 +47,7 @@ void add_to_queue(shared_block *shm, pid_t pid)
 	if(curr == NULL)
 	{
 		//if process queue is NULL, create first node
+		printf("pqueue empty, made head\n");
 		queue = (process_queue *)malloc(sizeof(process_queue));
 		queue->pid = pid;
 		queue->last = queue;
@@ -123,7 +124,7 @@ int main(int argc, char *argv[])
 			   and add and store result unlock and
 			   detach */
 		curr_process = queue;
-		if (curr_process != NULL) {
+		if (curr_process != NULL && curr_process->requests != NULL) {
 			do {
 //				int shared_mem_identifier;
 				shared_block *shared_mem;
@@ -131,10 +132,6 @@ int main(int argc, char *argv[])
 				
 				request = curr_process->requests;
 					
-				if(request == NULL)
-				{
-					printf("about to access null request\n");
-				}
 //				shared_mem_identifier = shmget(request->shared_mem_key, sizeof(shared_block), 
 //						   					   S_IWUSR | S_IRUSR | S_IWGRP | S_IRGRP );
 //				shared_mem = (shared_block *) shmat(shared_mem_identifier, NULL, 0);
@@ -165,6 +162,7 @@ int main(int argc, char *argv[])
 					next_process = curr_process->next;
 					free(curr_process);
 					curr_process = next_process;
+					printf("process node freed\n");
 				}
 				
 			} while (curr_process != NULL);
