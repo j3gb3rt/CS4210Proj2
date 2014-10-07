@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/msg.h>
+#include <sys/types.h>
 
 #include "remote_service.h"
 
@@ -55,7 +56,7 @@ int remote_service_client_init(unsigned int id) {
 //		printf("%s\n", strerror(errno));
 		return -2;
 	}
-    pairs[id].shared_mem_key = ftok("/dev/shm/remote_service", id);
+    pairs[id].shared_mem_key = ftok("/dev/shm/remote_service", id * (int) getpid());
 	if (pairs[id].shared_mem_key != -1) {
 //		printf("%i\n", shared_mem_key);
 	} else {

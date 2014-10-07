@@ -83,28 +83,28 @@ void add_to_queue(shared_block *shm, pid_t pid)
 
 }
 
-void add_to_requestq(process_queue *queue, shared_block *shm)
+void add_to_requestq(process_queue *pqueue, shared_block *shm)
 {
-	request_queue *curr = queue->requests;
+	request_queue *curr = pqueue->requests;
 	//request queue empty, add to front
 	if(curr == NULL)
 	{
-		queue->requests = (request_queue *)malloc(sizeof(request_queue));
-		queue->requests->last = queue->requests;
-		queue->requests->shm = shm;	
+		pqueue->requests = (request_queue *)malloc(sizeof(request_queue));
+		pqueue->requests->last = queue->requests;
+		pqueue->requests->shm = shm;	
 		printf("(new head)");
 	}else
 	{
 	//create and add to end of request queue
 		curr = (request_queue *)malloc(sizeof(request_queue));
 		curr->shm = shm;
-		queue->requests->last->next = curr;
-		queue->requests->last = curr;
+		pqueue->requests->last->next = curr;
+		pqueue->requests->last = curr;
 	}
 	printf("added request to queue\n");
 }
 
-void update_last(process_queue *queue)
+void update_last()
 {
 	process_queue *curr_process = queue;
 	while(curr_process->next != queue->last)
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
 						queue->last = curr_process->last;
 					}else if(curr_process == queue->last)
 					{
-						update_last(queue);
+						update_last();
 					}
 					next_process = curr_process->next;
 					free(curr_process->requests);
