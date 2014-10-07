@@ -11,12 +11,20 @@
 
 int msg_q_id;
 key_mem_pair pairs[MAX_THREADS];
+key_t msg_q_key;
 
 
 int remote_service_server_init() {
+	FILE *file;
 	pthread_t msg_watcher;
 	int flag = IPC_CREAT | 0666;
-	key_t msg_q_key = MSG_Q_KEY;
+
+	file = fopen("remote_service", "W+");
+	if(file != NULL){
+		fclose(file);
+	}
+
+	msg_q_key = ftok("remote_service", 'a');
 
 	if((msg_q_id = msgget(msg_q_key, flag)) < 0)
 	{
@@ -71,7 +79,7 @@ int remote_service_client_init(unsigned int id) {
 		return -5;
 	}
 	
-	msg_q_key = MSG_Q_KEY;
+	msg_q_key = ftok("remote_service", 'a');
 	msg_q_id = msgget(msg_q_key, 0666);
 	if (msg_q_id != -1) {
 		printf("%i\n", msg_q_id);
@@ -100,9 +108,13 @@ int remote_service_add(unsigned int id, int first_number, int second_number) {
 	printf("message sent. msq_q_id = %i\n", msg_q_id);
 	
 	while (pairs[id].shared_mem->locked) {
+		if(pairs[id].shared_mem->locked == 0){
+			print("what the fuck\n");
+		}
 		//spin
 	}
 
+	printf("client should be returning\n");
 	return pairs[id].shared_mem->ret_val;
 }
 

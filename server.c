@@ -21,9 +21,7 @@ void msgq_watch()
 
 	while(1)
 	{
-		printf("about to msgrcv\n");
 		msgq_rcvr(message);
-		printf("message received\n");
 		memcpy(&key, message.mtext,MSG_SIZE); 
 	
 		shmid = shmget(key, sizeof(shared_block), IPC_CREAT | S_IWUSR | S_IRUSR | 
@@ -100,17 +98,28 @@ void add_to_requestq(process_queue *queue, shared_block *shm)
 	printf("added request to queue\n");
 }
 
+void update_last(process_queue *queue)
+{
+	process_queue *curr_process = queue;
+	while(curr_process->next != queue->last)
+	{
+		curr_process = curr_process->next;
+	}
+	queue->last = curr_process;
+}
+
 
 int main(int argc, char *argv[])
 {
 	process_queue *curr_process;
+	process_queue *next_process;
 
 	remote_service_server_init();
 	pthread_create(&msg_watcher, NULL, (void *)&msgq_watch, NULL);
 	printf("message queue watching thread created\n");
 	
 	while(1) {
-		/*TODO iterate through the process queue
+		/*iterate through the process queue
 			   and add and store result unlock and
 			   detach */
 		curr_process = queue;
@@ -122,6 +131,10 @@ int main(int argc, char *argv[])
 				
 				request = curr_process->requests;
 					
+				if(request == NULL)
+				{
+					printf("about to access null request\n");
+				}
 //				shared_mem_identifier = shmget(request->shared_mem_key, sizeof(shared_block), 
 //						   					   S_IWUSR | S_IRUSR | S_IWGRP | S_IRGRP );
 //				shared_mem = (shared_block *) shmat(shared_mem_identifier, NULL, 0);
@@ -132,14 +145,28 @@ int main(int argc, char *argv[])
 				printf("request completed\n");
 				
 				if (request->next != NULL) {
+					curr_process->requests->next->last = request->last;
 					curr_process->requests = request->next;
 					free(request);
 				} else  {
-					curr_process->last->next = curr_process->next;
+//					queue empty
+					if(curr_process == queue && curr_process == queue->last)
+					{
+						queue = NULL;
+					}else if(curr_process == queue)
+//					assign new node as queue head
+					{
+						queue = curr_process->next;
+						queue->last = curr_process->last;
+					}else if(curr_process == queue->last)
+					{
+						update_last(queue);
+					}
+					next_process = curr_process->next;
 					free(curr_process);
+					curr_process = next_process;
 				}
 				
-				curr_process = curr_process->next;
 			} while (curr_process != NULL);
 		}
 	}

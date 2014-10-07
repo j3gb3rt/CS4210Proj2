@@ -10,6 +10,7 @@ typedef struct __request_queue
 typedef struct __process_queue
 {
 	pid_t pid;
+	struct __process_queue *previous;
 	struct __process_queue *next;
 	struct __process_queue *last;
    	request_queue *requests;
