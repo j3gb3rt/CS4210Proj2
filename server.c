@@ -11,6 +11,7 @@
 
 pthread_t msg_watcher;
 process_queue *queue;
+pthread_mutex_t lock;
 
 void msgq_watch()
 {
@@ -38,7 +39,9 @@ void msgq_watch()
 			printf("%s\n", strerror(errno));
 		}
 
+		pthread_mutex_lock(&lock);
 		add_to_queue(shm, shm->pid);		
+		pthread_mutex_unlock(&lock);
 	}
 }
 
@@ -89,6 +92,7 @@ void add_to_requestq(process_queue *queue, shared_block *shm)
 		queue->requests = (request_queue *)malloc(sizeof(request_queue));
 		queue->requests->last = queue->requests;
 		queue->requests->shm = shm;	
+		printf("(new head)");
 	}else
 	{
 	//create and add to end of request queue
@@ -119,12 +123,18 @@ int main(int argc, char *argv[])
 	remote_service_server_init();
 	pthread_create(&msg_watcher, NULL, (void *)&msgq_watch, NULL);
 	printf("message queue watching thread created\n");
+
+	if(pthread_mutex_init(&lock, NULL) != 0)
+	{
+		printf("mutex init failed\n");
+	}
 	
 	while(1) {
 		/*iterate through the process queue
 			   and add and store result unlock and
 			   detach */
 		curr_process = queue;
+		pthread_mutex_lock(&lock);
 		if (curr_process != NULL && curr_process->requests != NULL) {
 			do {
 //				int shared_mem_identifier;
@@ -167,5 +177,6 @@ int main(int argc, char *argv[])
 				
 			} while (curr_process != NULL);
 		}
+		pthread_mutex_unlock(&lock);
 	}
 }
