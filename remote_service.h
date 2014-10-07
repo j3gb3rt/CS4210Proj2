@@ -36,4 +36,4 @@ typedef struct __msg {
 int remote_service_server_init();
 int remote_service_client_init(unsigned int id);
 int remote_service_add(unsigned int id, int first_number, int second_number);
-void msgq_rcvr(msg_t message);
+void msgq_rcvr(msg_t *message);

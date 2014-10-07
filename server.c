@@ -21,10 +21,11 @@ void msgq_watch()
 
 	while(1)
 	{
-		msgq_rcvr(message);
+		msgq_rcvr(&message);
 		memcpy(&key, message.mtext,MSG_SIZE); 
 	
-		shmid = shmget(key, sizeof(shared_block), IPC_CREAT | S_IWUSR | S_IRUSR | 
+		printf("key: %i\n", key);	
+		shmid = shmget(key, sizeof(shared_block), S_IWUSR | S_IRUSR | 
                                                               S_IWGRP | S_IRGRP);
 		if(shmid == -1)
 		{
@@ -132,14 +133,12 @@ int main(int argc, char *argv[])
 				
 				request = curr_process->requests;
 					
-//				shared_mem_identifier = shmget(request->shared_mem_key, sizeof(shared_block), 
-//						   					   S_IWUSR | S_IRUSR | S_IWGRP | S_IRGRP );
-//				shared_mem = (shared_block *) shmat(shared_mem_identifier, NULL, 0);
 				shared_mem = request->shm;
 				shared_mem->ret_val = shared_mem->arg0 + shared_mem->arg1;
 				shared_mem->locked = 0;
+				printf("request completed: %i + %i = %i\n", shared_mem->arg0, shared_mem->arg1, shared_mem->ret_val);
 				shmdt(shared_mem);
-				printf("request completed\n");
+
 				
 				if (request->next != NULL) {
 					curr_process->requests->next->last = request->last;
@@ -160,6 +159,7 @@ int main(int argc, char *argv[])
 						update_last(queue);
 					}
 					next_process = curr_process->next;
+					free(curr_process->requests);
 					free(curr_process);
 					curr_process = next_process;
 					printf("process node freed\n");

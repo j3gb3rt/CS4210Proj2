@@ -98,29 +98,26 @@ int remote_service_add(unsigned int id, int first_number, int second_number) {
 	pairs[id].shared_mem->ret_val = first_number + second_number;
 	pairs[id].shared_mem->pid = getpid();
 	
+
 	//mgsq call
 	//make a message
 //	printf("%i\n", pairs[id].shared_mem_key);
 	msg_t message;
 	message.mtype = 1;
 	memcpy(message.mtext, &pairs[id].shared_mem_key, MSG_SIZE);
+	//sprintf(message.mtext, "%i", pairs[id].shared_mem_key);
 	msgsnd(msg_q_id, &message, MSG_SIZE, 0);
-	printf("message sent. msq_q_id = %i\n", msg_q_id);
 	
 	while (pairs[id].shared_mem->locked) {
-		if(pairs[id].shared_mem->locked == 0){
-			printf("what the fuck\n");
-		}
 		//spin
 	}
 
-	printf("client should be returning\n");
 	return pairs[id].shared_mem->ret_val;
 }
 
-void msgq_rcvr(msg_t message)
+void msgq_rcvr(msg_t *message)
 {	
-	msgrcv(msg_q_id, &message, MSG_SIZE, 1, 0);
+	msgrcv(msg_q_id, message, MSG_SIZE, 1, 0);
 }
 
 
